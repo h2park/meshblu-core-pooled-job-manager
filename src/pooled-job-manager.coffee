@@ -22,6 +22,7 @@ class PooledJobManager
     debug 'Stats:', JSON.stringify @poolStats()
     @pool.acquire (error, client) =>
       debug '@pool.acquire', benchmark.toString()
+      delete error.code if error?
       return callback error if error?
 
       jobManager = new JobManager {client, @timeoutSeconds}
