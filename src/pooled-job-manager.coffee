@@ -18,6 +18,7 @@ class PooledJobManager
     min: @pool.getMinPoolSize()
 
   do: (requestQueue, responseQueue, request, callback) =>
+    debug '->do'
     benchmark = new Benchmark label: 'pooled-job-manager'
     debug 'Stats:', JSON.stringify @poolStats()
     @pool.acquire (error, client) =>
@@ -33,5 +34,21 @@ class PooledJobManager
         @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
           return callback jobLoggerError if jobLoggerError?
           callback error, response
+
+  createResponse: (responseQueue, request, callback) =>
+    debug '->createResponse'
+    benchmark = new Benchmark label: 'pooled-job-manager'
+    debug 'Stats:', JSON.stringify @poolStats()
+    @pool.acquire (error, client) =>
+      debug '@pool.acquire', benchmark.toString()
+      delete error.code if error?
+      return callback error if error?
+      jobManager = new JobManager {client, @timeoutSeconds}
+      jobManager.createResponse responseQueue, request, (error) =>
+        @pool.release client
+        debug '@pool.release', benchmark.toString()
+        @jobLogger.log {error,request,response:{},elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+          return callback jobLoggerError if jobLoggerError?
+          callback error
 
 module.exports = PooledJobManager

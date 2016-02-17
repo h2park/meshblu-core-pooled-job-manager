@@ -50,3 +50,16 @@ describe 'PooledJobManager', ->
 
     it 'should call jobLogger.log', ->
       expect(@fakeJobLogger.log).to.have.been.called
+
+  describe '->createResponse', ->
+    beforeEach (done) ->
+      request =
+        metadata:
+          responseId: 'response-id'
+          jobType: 'SendMessage'
+        rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
+
+      @sut.createResponse 'response', request, (error) => done error
+
+    it 'should call jobLogger.log', ->
+      expect(@fakeJobLogger.log).to.have.been.called
