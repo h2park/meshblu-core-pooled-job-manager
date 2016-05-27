@@ -35,6 +35,7 @@ describe 'PooledJobManager', ->
         response =
           metadata:
             responseId: job.metadata.responseId
+
         @jobManager.createResponse 'response', response, (error) =>
           throw error if error?
 
