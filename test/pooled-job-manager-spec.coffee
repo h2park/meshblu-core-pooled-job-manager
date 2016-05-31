@@ -20,12 +20,12 @@ describe 'PooledJobManager', ->
 
     @fakeJobLogger = log: sinon.stub().yields null
 
-    @sut = new PooledJobManager {pool, timeoutSeconds: 1, jobLogger: @fakeJobLogger}
+    @sut = new PooledJobManager {pool, timeoutSeconds: 1, jobLogger: @fakeJobLogger, jobLogSampleRate: 1}
 
   beforeEach ->
     client = redis.createClient @redisKey
     client = _.bindAll client, _.functionsIn(client)
-    @jobManager = new JobManager {client, timeoutSeconds: 1}
+    @jobManager = new JobManager {client, timeoutSeconds: 1, jobLogSampleRate: 0}
 
   describe '->do', ->
     beforeEach (done) ->

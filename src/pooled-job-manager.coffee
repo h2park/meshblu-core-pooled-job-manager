@@ -4,10 +4,11 @@ Benchmark = require 'simple-benchmark'
 colors = require 'colors'
 
 class PooledJobManager
-  constructor: ({@pool,@timeoutSeconds,@jobLogger}) ->
+  constructor: ({@pool,@timeoutSeconds,@jobLogger,@jobLogSampleRate}) ->
     throw new Error('PooledJobManager needs a pool') unless @pool?
     throw new Error('PooledJobManager needs timeoutSeconds') unless @timeoutSeconds?
     throw new Error('PooledJobManager needs a jobLogger') unless @jobLogger?
+    throw new Error('PooledJobManager needs a jobLogSampleRate') unless @jobLogSampleRate?
 
   poolStats: =>
     name: @pool.getName()
@@ -26,12 +27,12 @@ class PooledJobManager
       delete error.code if error?
       return callback error if error?
 
-      jobManager = new JobManager {client, @timeoutSeconds}
+      jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
       jobManager.do requestQueue, responseQueue, request, (error, response) =>
         @pool.release client
         debug '@pool.release', benchmark.toString()
 
-        @jobLogger.log {error,request,response,elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+        @jobLogger.log {error,request,response}, (jobLoggerError) =>
           return callback jobLoggerError if jobLoggerError?
           callback error, response
 
@@ -43,11 +44,11 @@ class PooledJobManager
       debug '@pool.acquire', benchmark.toString()
       delete error.code if error?
       return callback error if error?
-      jobManager = new JobManager {client, @timeoutSeconds}
+      jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
       jobManager.createResponse responseQueue, request, (error) =>
         @pool.release client
         debug '@pool.release', benchmark.toString()
-        @jobLogger.log {error,request,response:{},elapsedTime:benchmark.elapsed()}, (jobLoggerError) =>
+        @jobLogger.log {error,request,response:{}}, (jobLoggerError) =>
           return callback jobLoggerError if jobLoggerError?
           callback error
 
