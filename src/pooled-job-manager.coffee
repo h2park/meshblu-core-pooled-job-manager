@@ -27,8 +27,8 @@ class PooledJobManager
       delete error.code if error?
       return callback error if error?
 
-      jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
-      jobManager.do requestQueue, responseQueue, request, (error, response) =>
+      client.jobManager ?= new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
+      client.jobManager.do requestQueue, responseQueue, request, (error, response) =>
         @pool.release client
         debug '@pool.release', benchmark.toString()
 
