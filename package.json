@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-pooled-job-manager",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Pooled Job Manager",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "debug": "^2.2.0",
-    "meshblu-core-job-manager": "^5.3.4",
+    "meshblu-core-job-manager": "^5.4.1",
     "simple-benchmark": "^1.0.7"
   },
   "devDependencies": {
