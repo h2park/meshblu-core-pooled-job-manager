@@ -1,5 +1,5 @@
 JobManager = require 'meshblu-core-job-manager'
-debug = require('debug')('meshblu-server-http:pooled-job-manager')
+debug = require('debug')('meshblu-core-pooled-job-manager:pooled-job-manager')
 Benchmark = require 'simple-benchmark'
 colors = require 'colors'
 
