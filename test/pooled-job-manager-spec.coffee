@@ -1,7 +1,7 @@
 _ = require 'lodash'
 redis = require 'fakeredis'
 UUID = require 'uuid'
-{Pool} = require 'generic-pool'
+{Pool} = require '@octoblu/generic-pool'
 PooledJobManager = require '../'
 JobManager = require 'meshblu-core-job-manager'
 
