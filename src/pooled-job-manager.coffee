@@ -52,4 +52,20 @@ class PooledJobManager
           return callback jobLoggerError if jobLoggerError?
           callback error
 
+  getResponse: (responseQueue, requestId, callback) =>
+    debug '->getResponse'
+    benchmark = new Benchmark label: 'pooled-job-manager'
+    debug 'Stats:', JSON.stringify @poolStats()
+    @pool.acquire (error, client) =>
+      debug '@pool.acquire', benchmark.toString()
+      delete error.code if error?
+      return callback error if error?
+      jobManager = new JobManager {client, @timeoutSeconds, @jobLogSampleRate}
+      jobManager.getResponse responseQueue, requestId, (error, result) =>
+        @pool.release client
+        debug '@pool.release', benchmark.toString()
+        @jobLogger.log {error,request: { requestId }, response:{}}, (jobLoggerError) =>
+          return callback jobLoggerError if jobLoggerError?
+          callback error, result
+
 module.exports = PooledJobManager

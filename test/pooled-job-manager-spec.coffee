@@ -1,9 +1,9 @@
-_ = require 'lodash'
-redis = require 'fakeredis'
-UUID = require 'uuid'
-{Pool} = require '@octoblu/generic-pool'
+_                = require 'lodash'
+redis            = require 'fakeredis'
+UUID             = require 'uuid'
+{Pool}           = require '@octoblu/generic-pool'
 PooledJobManager = require '../'
-JobManager = require 'meshblu-core-job-manager'
+JobManager       = require 'meshblu-core-job-manager'
 
 describe 'PooledJobManager', ->
   beforeEach ->
@@ -64,3 +64,29 @@ describe 'PooledJobManager', ->
 
     it 'should call jobLogger.log', ->
       expect(@fakeJobLogger.log).to.have.been.called
+
+  describe '->getResponse', ->
+    describe 'insert response', ->
+      beforeEach (done) ->
+        request =
+          metadata:
+            responseId: 'response-id'
+            jobType: 'SendMessage'
+          rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
+
+        @sut.createResponse 'response', request, (error) => done error
+
+      describe 'get response', ->
+        beforeEach (done) ->
+          @sut.getResponse 'response', 'response-id', (error, @result) => done error
+
+        it 'should have the response data', ->
+          request =
+            metadata:
+              responseId: 'response-id'
+              jobType: 'SendMessage'
+            rawData: JSON.stringify devices:['receiver-uuid'], payload: 'boo'
+          expect(@result).to.deep.equal request
+
+        it 'should call jobLogger.log', ->
+          expect(@fakeJobLogger.log).to.have.been.called

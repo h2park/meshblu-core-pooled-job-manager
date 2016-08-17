@@ -1,6 +1,6 @@
 {
   "name": "meshblu-core-pooled-job-manager",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Pooled Job Manager",
   "main": "index.js",
   "scripts": {
