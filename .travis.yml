@@ -1,9 +1,6 @@
 language: node_js
 node_js:
 - '5'
-branches:
-  only:
-  - "/^v[0-9]/"
 addons:
   code_climate:
     repo_token: 80be5bc6ff2aa3c0939605d7b14a26b7d3f6706beed4286f762b41f0e44d6151
@@ -19,3 +16,5 @@ deploy:
   on:
     tags: true
     branches: true
+after_success:
+- bash <(curl -s https://codecov.io/bash)
